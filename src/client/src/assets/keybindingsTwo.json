@@ -1,0 +1,10 @@
+{
+  "ArrowUp": "upUp",
+  "ArrowDown": "downUp",
+  "ArrowLeft": "leftUp",
+  "ArrowRight": "rightUp",
+  "w": "upUp",
+  "s": "downUp",
+  "a": "leftUp",
+  "d": "rightUp"
+}

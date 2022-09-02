@@ -16,6 +16,7 @@ export function getInitialState(): IGameState {
 
 export function gameLogic(state: IGameState, commands: Commands): IGameState {
   evaluateCommands(state, commands);
+  zoomPlayers(state);
   resolveCoinCollisions(state);
   resolvePlayerCollisions(state);
   addMoreCoins(state);
@@ -30,32 +31,108 @@ function evaluateCommands(state: IGameState, commands: Commands) {
     }
     const command = commands[playerId];
     if (command === 'up') {
-      const newY = player.y - 1;
-      if (newY < 0) {
-        return;
-      }
-      player.y = newY;
+      if (player.uVel< 3) {
+        // SPEED LIMIT IS 3
+        player.uVel++;
+      } 
     } else if (command === 'down') {
-      const newY = player.y + 1;
-      if (newY > state.fieldSize.height) {
-        return;
-      }
-      player.y = newY;
+        if (player.dVel < 3) {
+          // SPEED LIMIT IS 3
+          player.dVel++;
+        }
     } else if (command === 'left') {
-      const newX = player.x - 1;
-      if (newX < 0) {
-        return;
-      }
-      player.x = newX;
+        if (player.lVel < 3) {
+          // SPEED LIMIT IS 3
+          player.lVel++;
+        }
     } else if (command === 'right') {
-      const newX = player.x + 1;
-      if (newX > state.fieldSize.width) {
-        return;
-      }
-      player.x = newX;
+        console.log("lmao you went right what an absolute scrub");
+        if (player.rVel < 3) {
+          // SPEED LIMIT IS 3
+          player.rVel++;
+        }
+    } else if (command === 'qq') {
+        const newX = player.x + 10;
+        if (newX > state.fieldSize.width) {
+          player.x = state.fieldSize.width;
+        } else {
+          player.x = newX;
+        }
+        console.log("qq");
+    } else if (command === 'upUp') {
+        // Reset uVel
+        player.uVel = 0;
+        console.log("UPUP HAS SUCCEEDED TO THE HEAVENS WE GO");
+    } else if (command === 'downUp') {
+        // Reset dVel
+        player.dVel = 0;
+        console.log("DOWNUP HAS SUCCEED TO THE HEAVENS WE GO (AGAIN)");
+    } else if (command === 'rightUp') {
+        // Reset rVel
+        player.rVel = 0;
+    } else if (command === 'leftUp') {
+        // Reset lVel
+        player.lVel = 0;
     }
   });
 }
+
+function zoomPlayers(state: IGameState) {
+  const playersList = state.players;
+  playersList.forEach(player => {
+    if (player.uVel > 0) {
+      // Idk why this is inverted (canvass shennanigans)
+      const newY = player.y - player.uVel;
+      if (newY < 0) {
+        // lmao bounce them back
+        console.log('git bounced Alexandre');
+        player.dVel = player.uVel;
+        player.uVel = 0;
+      } else {
+        player.y = newY;
+      }
+    }
+    if (player.dVel > 0) {
+      // Idk why this is inverted (canvass shennanigans)
+      const newY = player.y + player.dVel;
+
+      if (newY > state.fieldSize.height) {
+        // lmao bounce them back
+        player.uVel = player.dVel;
+        player.dVel = 0;
+      } else {
+        player.y = newY;
+      }
+
+    }
+    if (player.rVel > 0) {
+      const newX = player.x + player.rVel;
+
+      if (newX > state.fieldSize.width) {
+        // lmao bounce them back
+        player.lVel = player.rVel;
+        player.rVel = 0;
+      } else {
+        player.x = newX;
+      }
+
+    }
+    if (player.lVel > 0) {
+      const newX = player.x - player.lVel;
+
+      if (newX < 0) {
+        // lmao bounce them back
+        player.rVel = player.lVel;
+        player.lVel = 0;
+      } else {
+        player.x = newX;
+      }
+
+      player.x = newX;
+    }
+  })
+}
+
 
 function resolveCoinCollisions(state: IGameState) {
   state.coins.slice().forEach((coin) => {

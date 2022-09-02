@@ -4,7 +4,7 @@ import { Command, Commands, IGameState } from './models';
 export type UpdateCallback = (gameState: IGameState) => void;
 export type GameOverCallback = (reason: string) => void;
 
-const UPDATES_PER_SECOND = 10;
+const UPDATES_PER_SECOND = 15;
 
 export class Game {
   private _gameState: IGameState;
@@ -50,6 +50,14 @@ export class Game {
       id,
       name,
       score: 1,
+      lVel: 0,
+      rVel: 0,
+      uVel: 0,
+      dVel: 0,
+      lVelCounter: 0,
+      rVelCounter: 0,
+      uVelCounter: 0,
+      dVelCounter: 0,
     });
   }
 

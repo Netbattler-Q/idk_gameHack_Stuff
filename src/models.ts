@@ -14,6 +14,14 @@ export interface IPlayer {
   score: number;
   x: number;
   y: number;
+  lVel: number;
+  rVel: number;
+  uVel: number;
+  dVel: number;
+  rVelCounter: number;
+  lVelCounter: number;
+  uVelCounter: number;
+  dVelCounter: number;
 }
 
 export interface ICoin {
@@ -22,5 +30,5 @@ export interface ICoin {
   isDeadly?: boolean;
 }
 
-export type Command = 'left' | 'right' | 'up' | 'down';
+export type Command = 'left' | 'right' | 'up' | 'down' | 'qq' | 'upUp' | 'downUp' | 'rightUp' | 'leftUp';
 export type Commands = Record<string, Command>;

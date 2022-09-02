@@ -6,6 +6,7 @@ import {
   ConnectionService,
 } from '../connection/connection.service';
 import * as KEY_BINDINGS from '../../assets/keybindings.json';
+import * as KEY_BINDINGS_TWO from '../../assets/keybindingsTwo.json';
 import { StateService } from '../state/state.service';
 import { Router } from '@angular/router';
 import { Command, IGameState, IPlayer } from '../../../../models';
@@ -20,6 +21,7 @@ const MAX_ALLOWABLE_MOVE_COMMANDS_PER_SECOND = 15;
 })
 export class GameComponent implements AfterViewInit {
   private keyBindings = KEY_BINDINGS as Record<string, Command>;
+  private keyBindingsTwo = KEY_BINDINGS_TWO as Record<string, Command>;
   private gameActive = false;
   private connection?: Connection;
 
@@ -107,6 +109,23 @@ export class GameComponent implements AfterViewInit {
         filter((k) => Object.keys(this.keyBindings).includes(k)),
         // map the key to the command
         map((k) => this.keyBindings[k]),
+        // only allow 25 commands per second
+        throttleTime(1000 / MAX_ALLOWABLE_MOVE_COMMANDS_PER_SECOND)
+      )
+      .subscribe((command) => {
+        this.connection?.sendCommand(command);
+      });
+
+      fromEvent<KeyboardEvent>(document, 'keyup')
+      .pipe(
+        // Only care about key events while game is active
+        filter(() => this.gameActive),
+        // Get the key from the event
+        map((e) => e.key),
+        // ignore unmapped keys
+        filter((k) => Object.keys(this.keyBindingsTwo).includes(k)),
+        // map the key to the command
+        map( k => { return this.keyBindingsTwo[k] }),
         // only allow 25 commands per second
         throttleTime(1000 / MAX_ALLOWABLE_MOVE_COMMANDS_PER_SECOND)
       )
